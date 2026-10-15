@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/jpeg" href="img/cohete.png">
+<title>Tema 2: Servidores de Aplicaciones | Despliegue de Aplicaciones Web</title>
+<style>
+  :root{
+    --bg:#f6f8fb;
+    --panel:#ffffff;
+    --sidebar:#0f172a;
+    --sidebar-hover:#1e293b;
+    --text:#1e293b;
+    --muted:#64748b;
+    --accent:#0ea5e9;
+    --accent-2:#10b981;
+    --border:#e2e8f0;
+    --code-bg:#0f172a;
+    --code-text:#e2e8f0;
+    --code-comment:#64748b;
+    --code-flag:#fbbf24;
+    --code-path:#38bdf8;
+    --warn-bg:#fff7ed;
+    --warn-border:#fb923c;
+    --note-bg:#eff6ff;
+    --note-border:#60a5fa;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+  }
+  .layout{display:flex;min-height:100vh;}
+
+  /* Sidebar */
+  .sidebar{
+    width:280px;
+    flex-shrink:0;
+    background:var(--sidebar);
+    color:#cbd5e1;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+    padding:24px 0 40px;
+  }
+  .sidebar-brand{
+    padding:0 24px 20px;
+    border-bottom:1px solid #1e293b;
+    margin-bottom:8px;
+  }
+  .sidebar-brand .tag{
+    display:inline-block;
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--accent);
+    background:rgba(14,165,233,.12);
+    padding:3px 8px;
+    border-radius:999px;
+    margin-bottom:10px;
+  }
+  .sidebar-brand h1{
+    font-size:16px;
+    margin:0 0 4px;
+    color:#f1f5f9;
+    line-height:1.35;
+  }
+  .sidebar-brand p{
+    font-size:12.5px;
+    color:var(--muted);
+    margin:0;
+  }
+  .nav-group{padding:16px 12px 0;}
+  .nav-group h2{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:#475569;
+    margin:0 0 6px 12px;
+  }
+  .nav-group ul{list-style:none;margin:0 0 8px;padding:0;}
+  .nav-group a{
+    display:block;
+    padding:7px 12px;
+    border-radius:8px;
+    color:#cbd5e1;
+    text-decoration:none;
+    font-size:13.5px;
+  }
+  .nav-group a:hover{background:var(--sidebar-hover);color:#fff;}
+  .nav-group .soon{
+    display:block;
+    padding:7px 12px;
+    font-size:13.5px;
+    color:#475569;
+    font-style:italic;
+    cursor:default;
+  }
+
+  /* Content */
+  .content{flex:1;min-width:0;padding:48px 56px 100px;max-width:960px;}
+  .hero{margin-bottom:44px;}
+  .hero .eyebrow{
+    color:var(--accent);
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  .hero h1{font-size:34px;margin:0 0 12px;color:#0f172a;}
+  .hero p{color:var(--muted);font-size:16px;max-width:640px;margin:0;}
+
+  section{margin-bottom:52px;scroll-margin-top:24px;}
+  h2.section-title{
+    font-size:22px;
+    color:#0f172a;
+    border-bottom:2px solid var(--border);
+    padding-bottom:10px;
+    margin:0 0 20px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  h2.section-title .n{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:26px;height:26px;
+    background:var(--accent);
+    color:#fff;
+    border-radius:7px;
+    font-size:13px;
+    font-weight:700;
+  }
+  h3{font-size:16.5px;color:#0f172a;margin:26px 0 10px;}
+  p{margin:0 0 14px;}
+  ul,ol{margin:0 0 14px;padding-left:22px;}
+  li{margin-bottom:6px;}
+  code.inline{
+    background:#eef2f7;
+    color:#0f172a;
+    padding:2px 6px;
+    border-radius:5px;
+    font-family:"SF Mono",Consolas,Menlo,monospace;
+    font-size:13px;
+  }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:22px 24px;
+    margin-bottom:18px;
+  }
+
+  /* Diagram */
+  .diagram{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    flex-wrap:wrap;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:28px 20px;
+    margin:18px 0 26px;
+  }
+  .box{
+    background:#f8fafc;
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    padding:14px 18px;
+    text-align:center;
+    min-width:140px;
+  }
+  .box strong{display:block;font-size:14px;color:#0f172a;}
+  .box span{font-size:12px;color:var(--muted);}
+  .arrow{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    font-size:11px;
+    color:var(--muted);
+    min-width:110px;
+  }
+  .arrow .line{width:100%;height:2px;background:var(--accent);position:relative;margin:4px 0;}
+  .arrow .line::after{
+    content:"";
+    position:absolute;right:-1px;top:-4px;
+    border:5px solid transparent;
+    border-left-color:var(--accent);
+  }
+
+  /* Code blocks */
+  pre{
+    background:var(--code-bg);
+    color:var(--code-text);
+    padding:16px 18px;
+    border-radius:10px;
+    overflow-x:auto;
+    font-family:"SF Mono",Consolas,Menlo,monospace;
+    font-size:13px;
+    line-height:1.65;
+    margin:0 0 16px;
+  }
+  pre .c{color:var(--code-comment);}
+  pre .f{color:var(--code-flag);}
+  pre .p{color:var(--code-path);}
+
+  .step{
+    display:flex;
+    gap:14px;
+    margin-bottom:18px;
+  }
+  .step .dot{
+    flex-shrink:0;
+    width:28px;height:28px;
+    border-radius:50%;
+    background:#0f172a;
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12.5px;font-weight:700;
+    margin-top:2px;
+  }
+  .step .body{flex:1;}
+  .step .body h4{margin:0 0 6px;font-size:14.5px;color:#0f172a;}
+
+  table{width:100%;border-collapse:collapse;margin:0 0 20px;font-size:13.5px;}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  th{background:#f1f5f9;color:#334155;font-size:12px;text-transform:uppercase;letter-spacing:.03em;}
+  td code.inline{white-space:nowrap;}
+
+  .note,.warn{
+    border-radius:10px;
+    padding:14px 16px;
+    font-size:13.5px;
+    margin:0 0 18px;
+  }
+  .note{background:var(--note-bg);border:1px solid var(--note-border);color:#1e3a5f;}
+  .warn{background:var(--warn-bg);border:1px solid var(--warn-border);color:#7c2d12;}
+  .note strong,.warn strong{display:block;margin-bottom:4px;}
+
+  footer{
+    border-top:1px solid var(--border);
+    padding-top:20px;
+    color:var(--muted);
+    font-size:12.5px;
+  }
+
+  @media (max-width:860px){
+    .layout{flex-direction:column;}
+    .sidebar{width:100%;height:auto;position:relative;}
+    .content{padding:32px 20px 80px;}
+  }
+
+  /* Logos de los proyectos (archivos en ./img) */
+  .logos{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 22px;}
+  .logo-card{
+    flex:1;min-width:180px;max-width:260px;margin:0;
+    background:var(--panel);border:1px solid var(--border);border-radius:12px;
+    padding:18px 22px;text-align:center;
+  }
+  .logo-card img{display:block;max-height:64px;max-width:100%;margin:0 auto 10px;}
+  .logo-card figcaption{font-size:12.5px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <span class="tag">DAW · Despliegue de Aplicaciones Web</span>
+      <h1>Apuntes de la asignatura</h1>
+      <p>Escuela Profesional Vedruna</p>
+    </div>
+
+    <div class="nav-group">
+      <h2>Tema 1 · Servidores web</h2>
+      <ul>
+        <li><a href="../TEMA%201-Servidores%20WEB/index.html">Ir al Tema 1 →</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <h2>Tema 2 · Servidores de aplicaciones</h2>
+      <ul>
+        <li><a href="#intro">1. ¿Qué es un servidor de aplicaciones?</a></li>
+        <li><a href="#comparativa">2. Tomcat y otros servidores de aplicaciones</a></li>
+        <li><a href="#entorno">3. Entorno de trabajo (VM Azure)</a></li>
+        <li><a href="#instalacion">4. Instalación de Tomcat (apt)</a></li>
+        <li><a href="#rutas">5. Rutas de configuración</a></li>
+        <li><a href="#firewall">6. Firewall: UFW y Azure</a></li>
+        <li><a href="#practica">7. Práctica: API Pokémon (WAR + H2)</a></li>
+        <li><a href="#resumen">8. Comandos y resumen</a></li>
+        <li><a href="#extra">+ Tarea extra: Manager App</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <h2>Tema 3 · Transferencia de archivos</h2>
+      <ul>
+        <li><a href="../TEMA%203%20-%20Servidores%20Transferencia%20de%20Archivos/index.html">Ir al Tema 3 →</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <h2>Tema 4 · Sphinx (documentación)</h2>
+      <ul>
+        <li><a href="../TEMA%204%20-%20Sphinx/index.html">Ir al Tema 4 →</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="content">
+
+    <div class="hero">
+      <div class="eyebrow">Tema 2</div>
+      <h1>Servidores de aplicaciones</h1>
+      <p>Qué es un servidor de aplicaciones y en qué se diferencia de un servidor web, ejemplos reales (Tomcat, WildFly, Jetty&hellip;) y un caso práctico completo: instalar Apache Tomcat en la VM Ubuntu de Azure y desplegar en él una API Spring Boot de ejemplo (<strong>Pokémon</strong>) con base de datos embebida H2, empaquetada como <code class="inline">.war</code>.</p>
+    </div>
+
+    <!-- 1. INTRO -->
+    <section id="intro">
+      <h2 class="section-title"><span class="n">1</span>¿Qué es un servidor de aplicaciones?</h2>
+      <p>En el Tema 1 vimos que un <strong>servidor web</strong> (Apache, Nginx) sabe atender peticiones HTTP y servir contenido: archivos que ya existen en disco, o páginas generadas delegando en algún intérprete externo. Un <strong>servidor de aplicaciones</strong> va un paso más allá: es el programa que <em>ejecuta el código de la aplicación</em> &mdash;normalmente escrito en Java&mdash; y le proporciona todo lo que necesita para funcionar: un contenedor donde vivir, gestión del ciclo de vida de sus componentes, sesiones de usuario, pool de conexiones a base de datos, seguridad, y en los más completos, transacciones y mensajería.</p>
+
+      <div class="diagram">
+        <div class="box"><strong>Cliente</strong><span>Navegador / Postman</span></div>
+        <div class="arrow"><span>Petición HTTP</span><div class="line"></div><span>GET /api/v1/&hellip;</span></div>
+        <div class="box"><strong>Servidor de aplicaciones</strong><span>Tomcat</span></div>
+        <div class="arrow"><span>ejecuta</span><div class="line"></div><span>Servlets / Spring Boot</span></div>
+        <div class="box"><strong>Lógica de negocio</strong><span>Controladores, servicios, BD</span></div>
+      </div>
+
+      <p>En muchas arquitecturas ambos conviven: un servidor web hace de <strong>proxy inverso</strong> delante del servidor de aplicaciones &mdash;sirve directamente los archivos estáticos y reenvía las peticiones dinámicas al servidor de aplicaciones&mdash;, mientras que el servidor de aplicaciones se dedica solo a ejecutar la lógica. En este tema instalaremos Tomcat en la misma VM del Tema 1, donde ya hay un Apache2 funcionando, precisamente para ver cómo pueden coexistir un servidor web y uno de aplicaciones en la misma máquina, cada uno en su puerto.</p>
+
+      <table>
+        <thead><tr><th></th><th>Servidor web</th><th>Servidor de aplicaciones</th></tr></thead>
+        <tbody>
+          <tr><td>Qué sirve</td><td>Archivos estáticos, y contenido dinámico solo si delega en otro proceso</td><td>Código de la aplicación en ejecución (Servlets, JSP, un JAR/WAR de Spring Boot&hellip;)</td></tr>
+          <tr><td>Gestiona</td><td>Peticiones HTTP, virtual hosting, TLS</td><td>Ciclo de vida de los componentes, sesiones, seguridad, pool de conexiones</td></tr>
+          <tr><td>Ejemplos</td><td>Apache, Nginx, IIS</td><td>Tomcat, WildFly, GlassFish, Jetty</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 2. COMPARATIVA -->
+    <section id="comparativa">
+      <h2 class="section-title"><span class="n">2</span>Tomcat y otros servidores de aplicaciones</h2>
+      <p>Dentro del mundo Java hay varios servidores de aplicaciones, y no todos cubren lo mismo: unos son contenedores de Servlets ligeros y otros implementan la especificación <strong>Java EE / Jakarta EE</strong> completa.</p>
+
+      <div class="logos">
+        <figure class="logo-card"><img src="img/tomcat.png" alt="Logo de Apache Tomcat" onerror="this.style.display='none'"><figcaption>Apache Tomcat</figcaption></figure>
+        <figure class="logo-card"><img src="img/jboss.png" alt="Logo de JBoss" onerror="this.style.display='none'"><figcaption>WildFly (antes JBoss)</figcaption></figure>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Servidor</th><th>Qué implementa</th><th>Cuándo se usa</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Apache Tomcat</strong></td><td>Contenedor de Servlets, JSP y WebSocket (no es Java EE completo: sin EJB, JTA, JMS&hellip;)</td><td>Aplicaciones web Java "normales" y, sobre todo, aplicaciones Spring / Spring Boot</td></tr>
+          <tr><td><strong>Eclipse Jetty</strong></td><td>Similar a Tomcat: contenedor de Servlets ligero, muy embebible</td><td>Microservicios, herramientas de desarrollo, entornos embebidos</td></tr>
+          <tr><td><strong>WildFly (antes JBoss)</strong></td><td>Java EE / Jakarta EE completo: EJB, JTA, JMS, JPA, seguridad declarativa&hellip;</td><td>Aplicaciones empresariales grandes que necesitan esos servicios</td></tr>
+          <tr><td><strong>GlassFish / Payara</strong></td><td>Implementación de referencia de Jakarta EE</td><td>Entornos que exigen cumplir estrictamente el estándar Jakarta EE</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>En esta unidad</strong>
+        Trabajaremos con <strong>Tomcat</strong>: es el motor que Spring Boot lleva embebido por defecto, es ligero, y es el estándar de facto para desplegar aplicaciones Spring como las que se desarrollan en la asignatura de programación &mdash;no necesitan EJB ni JTA, solo un contenedor de Servlets sólido.
+      </div>
+    </section>
+
+    <!-- 3. ENTORNO -->
+    <section id="entorno">
+      <h2 class="section-title"><span class="n">3</span>Entorno de trabajo</h2>
+      <p>Reutilizamos la misma <strong>VM Ubuntu de Azure</strong> del Tema 1 (misma IP pública, mismo acceso por SSH). No hace falta crear una máquina nueva: instalaremos Tomcat junto a Apache2, cada uno escuchando en su propio puerto.</p>
+
+      <div class="step">
+        <div class="dot">1</div>
+        <div class="body">
+          <h4>Conectar por SSH a la misma VM del Tema 1</h4>
+          <pre>ssh usuario@&lt;IP_PUBLICA_VM&gt;</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">2</div>
+        <div class="body">
+          <h4>Comprobar la versión de Ubuntu y qué Tomcat ofrece <code class="inline">apt</code></h4>
+          <pre>lsb_release -ds
+apt-cache policy tomcat10 tomcat11</pre>
+          <p>El paquete de Tomcat que existe en <code class="inline">apt</code> depende de la versión de Ubuntu (se explica en el punto 4). En esta práctica la VM es <strong>Ubuntu 24.04</strong>, que trae <code class="inline">tomcat10</code>.</p>
+        </div>
+      </div>
+
+      <div class="warn">
+        <strong>Si partes de una VM nueva</strong>
+        Sigue primero los pasos del <a href="../TEMA%201-Servidores%20WEB/index.html#entorno">punto 3 del Tema 1</a> para crearla en Azure (imagen Ubuntu Server 24.04, tamaño básico, IP pública) antes de continuar con este tema.
+      </div>
+    </section>
+
+    <!-- 4. INSTALACION -->
+    <section id="instalacion">
+      <h2 class="section-title"><span class="n">4</span>Instalación de Tomcat con apt</h2>
+      <p>Ubuntu empaqueta Tomcat en sus repositorios, así que se instala como cualquier otro paquete (igual que Apache2 en el Tema 1). <code class="inline">apt</code> se encarga de instalar Java si hace falta, crear el usuario <code class="inline">tomcat</code> del sistema, registrar el servicio de <code class="inline">systemd</code> y dejar las carpetas en su sitio: no hay que descargar nada a mano ni escribir ningún servicio.</p>
+
+      <div class="warn">
+        <strong>Ojo con las versiones: Spring Boot, Servlet y Tomcat deben coincidir</strong>
+        Cada versión de Spring Boot exige una versión mínima de la API Servlet, y cada Tomcat implementa una distinta. Si no encajan, el <code class="inline">.war</code> se despliega pero la aplicación no arranca.
+      </div>
+
+      <table>
+        <thead><tr><th>Spring Boot</th><th>API Servlet</th><th>Tomcat</th><th>Paquete <code class="inline">apt</code></th></tr></thead>
+        <tbody>
+          <tr><td>2.x (<code class="inline">javax.*</code>)</td><td>4.0</td><td>9</td><td><code class="inline">tomcat9</code> (Ubuntu 22.04)</td></tr>
+          <tr><td>3.x (<code class="inline">jakarta.*</code>)</td><td>6.0</td><td>10.1</td><td><code class="inline">tomcat10</code> (Ubuntu 24.04)</td></tr>
+          <tr><td>4.x</td><td>6.1</td><td>11</td><td><code class="inline">tomcat11</code> (Ubuntu 25.10 / 26.04)</td></tr>
+        </tbody>
+      </table>
+
+      <p>Como nuestra VM es Ubuntu 24.04, instalaremos <code class="inline">tomcat10</code> y la API de ejemplo usa <strong>Spring Boot 3.5</strong>.</p>
+
+      <div class="step">
+        <div class="dot">1</div>
+        <div class="body">
+          <h4>Actualizar el repositorio de paquetes</h4>
+          <pre>sudo apt update</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">2</div>
+        <div class="body">
+          <h4>Instalar Tomcat</h4>
+          <pre>sudo apt install tomcat10 -y</pre>
+          <p>Instala solo el servidor (sin las aplicaciones de ejemplo ni el Manager, que son paquetes aparte (el Manager se instala en la <a href="#extra">tarea extra</a> del final)).</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">3</div>
+        <div class="body">
+          <h4>Comprobar que el servicio está activo</h4>
+          <pre>sudo systemctl status tomcat10</pre>
+          <p>El propio paquete lo arranca y lo habilita para que se inicie con la VM. Debe aparecer <code class="inline">active (running)</code>.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">4</div>
+        <div class="body">
+          <h4>Probar en local, sin depender del firewall</h4>
+          <pre>curl http://localhost:8080</pre>
+          <p>Debería devolver el HTML de la página de bienvenida de Tomcat (algo como <em>"It works !"</em>).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. RUTAS -->
+    <section id="rutas">
+      <h2 class="section-title"><span class="n">5</span>Rutas y archivos de configuración</h2>
+      <p>Con la instalación por <code class="inline">apt</code>, Tomcat sigue la estructura habitual de Debian/Ubuntu (parecida a la de Apache2 en el Tema 1): la configuración en <code class="inline">/etc</code>, los logs en <code class="inline">/var/log</code> y las aplicaciones en <code class="inline">/var/lib</code>.</p>
+
+      <table>
+        <thead><tr><th>Ruta</th><th>Qué es</th></tr></thead>
+        <tbody>
+          <tr><td><code class="inline">/var/lib/tomcat10/webapps/</code></td><td>Carpeta de despliegue: aquí se copian los <code class="inline">.war</code> que Tomcat debe servir</td></tr>
+          <tr><td><code class="inline">/etc/tomcat10/server.xml</code></td><td>Configuración principal: el <code class="inline">Connector</code> del puerto 8080, hosts&hellip;</td></tr>
+          <tr><td><code class="inline">/etc/default/tomcat10</code></td><td>Variables del servicio: <code class="inline">JAVA_HOME</code>, <code class="inline">JAVA_OPTS</code> (memoria de la JVM)&hellip;</td></tr>
+          <tr><td><code class="inline">/var/log/tomcat10/catalina.out</code></td><td>Log principal: arranque de Tomcat y de cada aplicación desplegada</td></tr>
+          <tr><td><code class="inline">/usr/share/tomcat10/</code></td><td>Binarios de Tomcat (<code class="inline">CATALINA_HOME</code>)</td></tr>
+          <tr><td><code class="inline">/var/lib/tomcat10/</code></td><td>Datos de la instancia (<code class="inline">CATALINA_BASE</code>): <code class="inline">webapps</code>, <code class="inline">work</code>&hellip;</td></tr>
+        </tbody>
+      </table>
+
+      <p>Por defecto Tomcat trae una aplicación en <code class="inline">webapps/ROOT</code> (la página de bienvenida del punto 4). Nuestra API se desplegará al lado, en su propia carpeta dentro de <code class="inline">webapps/</code>.</p>
+    </section>
+
+    <!-- 6. FIREWALL -->
+    <section id="firewall">
+      <h2 class="section-title"><span class="n">6</span>Firewall: UFW y Azure (puerto 8080)</h2>
+      <p>Igual que en el Tema 1 con el puerto 80, hay que abrir el puerto de Tomcat en los <strong>dos</strong> niveles: el sistema operativo y la red de Azure.</p>
+
+      <div class="step">
+        <div class="dot">1</div>
+        <div class="body">
+          <h4>Permitir el puerto 8080 en UFW</h4>
+          <pre>sudo ufw allow 8080/tcp
+sudo ufw status</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">2</div>
+        <div class="body">
+          <h4>Abrir el puerto 8080 en el NSG de Azure</h4>
+          <p>Portal de Azure &rarr; recurso de la VM &rarr; <em>Redes / Networking</em> &rarr; <em>Reglas de puertos de entrada</em> &rarr; <em>Agregar regla de puerto de entrada</em> &rarr; puerto <strong>8080</strong> &rarr; protocolo TCP &rarr; Agregar.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">3</div>
+        <div class="body">
+          <h4>Comprobar desde el navegador</h4>
+          <pre>http://&lt;IP_PUBLICA_VM&gt;:8080</pre>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>Regla de oro (igual que en el Tema 1)</strong>
+        Un puerto solo es accesible desde internet si está abierto <strong>a la vez</strong> en UFW y en el NSG de Azure.
+      </div>
+    </section>
+
+    <!-- 7. PRACTICA -->
+    <section id="practica">
+      <h2 class="section-title"><span class="n">7</span>Práctica: desplegar la API Pokémon (WAR + H2)</h2>
+      <p>Como caso práctico usamos una API de ejemplo ya preparada, en la carpeta <code class="inline">pokemon-api/</code> junto a estos apuntes: una única tabla <strong>Pokémon</strong> (<code class="inline">id</code>, <code class="inline">nombre</code>, <code class="inline">tipo</code>) con operaciones CRUD en <code class="inline">/api/v1/pokemon</code>. Usa una base de datos <strong>H2 embebida en memoria</strong> &mdash;vive dentro de la propia aplicación&mdash; para no depender de MySQL, Docker ni ningún servicio externo: perfecta para centrarnos en el despliegue sin más complicaciones.</p>
+
+      <p>Por defecto, un proyecto Spring Boot se empaqueta como <code class="inline">.jar</code> con un Tomcat <em>embebido</em> dentro. Este proyecto ya viene preparado para generar en su lugar un <code class="inline">.war</code> que arranca sobre <strong>nuestro</strong> Tomcat externo. Así es como está construido:</p>
+
+      <div class="step">
+        <div class="dot">1</div>
+        <div class="body">
+          <h4>Versión de Spring Boot y empaquetado WAR en <code class="inline">pom.xml</code></h4>
+          <pre>&lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;<span class="f">3.5.16</span>&lt;/version&gt;   <span class="c">&lt;!-- Servlet 6.0 = Tomcat 10.1 --&gt;</span>
+&lt;/parent&gt;
+
+&lt;packaging&gt;<span class="f">war</span>&lt;/packaging&gt;</pre>
+          <p>Spring Boot 3.5 funciona con Servlet 6.0, que es lo que implementa el <code class="inline">tomcat10</code> de Ubuntu 24.04 (ver tabla del punto 4).</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">2</div>
+        <div class="body">
+          <h4>Starter de Tomcat como <code class="inline">provided</code>, y H2 como <code class="inline">runtime</code></h4>
+          <p><code class="inline">provided</code> hace que Spring compile contra las clases de Servlet pero <strong>sin</strong> meter un Tomcat embebido dentro del <code class="inline">.war</code> &mdash;ya lo pone el Tomcat externo&mdash;:</p>
+          <pre>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;
+    &lt;scope&gt;<span class="f">provided</span>&lt;/scope&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;com.h2database&lt;/groupId&gt;
+    &lt;artifactId&gt;h2&lt;/artifactId&gt;
+    &lt;scope&gt;<span class="f">runtime</span>&lt;/scope&gt;
+&lt;/dependency&gt;</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">3</div>
+        <div class="body">
+          <h4>La clase principal extiende <code class="inline">SpringBootServletInitializer</code></h4>
+          <p>En <code class="inline">PokemonApiApplication.java</code>:</p>
+          <pre>package com.vedruna.pokemonapi;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+@SpringBootApplication
+public class PokemonApiApplication <span class="f">extends SpringBootServletInitializer</span> {
+
+    public static void main(String[] args) {
+        SpringApplication.run(PokemonApiApplication.class, args);
+    }
+
+    <span class="c">// necesario para que Tomcat externo sepa arrancar el contexto de Spring</span>
+    <span class="f">@Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(PokemonApiApplication.class);
+    }</span>
+}</pre>
+          <p>Esto no rompe ejecutarla en local con <code class="inline">mvn spring-boot:run</code>: sigue arrancando igual, con Tomcat embebido, solo que además queda lista para desplegarse fuera.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">4</div>
+        <div class="body">
+          <h4>Probar primero en local (opcional pero recomendable)</h4>
+          <p>En tu ordenador (hace falta Java 17 o superior y Maven):</p>
+          <pre>cd pokemon-api
+mvn spring-boot:run</pre>
+          <p>Con la app arrancada en local, <code class="inline">http://localhost:8080/api/v1/pokemon</code> debería devolver ya 4 pokémon de ejemplo (los carga un <code class="inline">DataLoader</code> al arrancar).</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">5</div>
+        <div class="body">
+          <h4>Empaquetar el proyecto</h4>
+          <pre>mvn clean package</pre>
+          <p>El <code class="inline">pom.xml</code> fija <code class="inline">&lt;finalName&gt;pokemon-api&lt;/finalName&gt;</code>, así que genera siempre <code class="inline">target/pokemon-api.war</code> (sin sufijos de versión que luego haya que renombrar).</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">6</div>
+        <div class="body">
+          <h4>Copiar el .war a la VM</h4>
+          <pre>scp target/pokemon-api.war usuario@&lt;IP_PUBLICA_VM&gt;:/tmp/</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">7</div>
+        <div class="body">
+          <h4>Desplegar: copiarlo a <code class="inline">webapps/</code></h4>
+          <pre>ssh usuario@&lt;IP_PUBLICA_VM&gt;
+sudo cp /tmp/pokemon-api.war /var/lib/tomcat10/webapps/
+sudo chown tomcat:tomcat /var/lib/tomcat10/webapps/pokemon-api.war</pre>
+          <p>Tomcat detecta el archivo nuevo, lo descomprime en <code class="inline">webapps/pokemon-api/</code> y lo despliega en el contexto <code class="inline">/pokemon-api</code>. No hay que reiniciar nada.</p>
+        </div>
+      </div>
+
+      <div class="warn">
+        <strong>Gotcha: el "context path" es el nombre del .war</strong>
+        Al desplegar en un Tomcat externo, la ruta base de la app pasa a ser <strong>el nombre del archivo .war</strong> (sin la extensión), no lo que diga <code class="inline">application.properties</code>. Con <code class="inline">pokemon-api.war</code> la app queda en <code class="inline">/pokemon-api/&hellip;</code>; copiado como <code class="inline">ROOT.war</code> quedaría en la raíz.
+      </div>
+
+      <div class="step">
+        <div class="dot">8</div>
+        <div class="body">
+          <h4>Verificar</h4>
+          <pre>sudo tail -f /var/log/tomcat10/catalina.out</pre>
+          <p>Ahí se ve el arranque de Spring (sal con <code class="inline">Ctrl+C</code> cuando aparezca <code class="inline">Deployment of web application archive ... has finished</code>). Con la app arrancada:</p>
+          <pre>http://&lt;IP_PUBLICA_VM&gt;:8080/pokemon-api/api/v1/pokemon</pre>
+          <p>Debería devolver el JSON con Pikachu, Charmander, Squirtle y Bulbasaur. También se puede abrir la consola de H2 para ver la tabla directamente:</p>
+          <pre>http://&lt;IP_PUBLICA_VM&gt;:8080/pokemon-api/h2-console
+<span class="c"># JDBC URL: jdbc:h2:mem:pokemondb · usuario: sa · contraseña: (en blanco)</span></pre>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>Por qué H2 en memoria simplifica la práctica</strong>
+        Al no depender de MySQL ni de Docker, no hace falta preocuparse de si la VM de Azure tiene red hasta una base de datos externa: la base de datos vive dentro del propio proceso de Tomcat. La única contrapartida es que los datos se pierden si se reinicia Tomcat (el <code class="inline">DataLoader</code> los vuelve a crear en el siguiente arranque).
+      </div>
+
+      <div class="step">
+        <div class="dot">9</div>
+        <div class="body">
+          <h4>Redesplegar tras un cambio en el código</h4>
+          <p>Para evitar clases antiguas cacheadas, es más seguro parar Tomcat, borrar la versión desplegada y copiar la nueva:</p>
+          <pre>sudo systemctl stop tomcat10
+sudo rm -rf /var/lib/tomcat10/webapps/pokemon-api /var/lib/tomcat10/webapps/pokemon-api.war
+sudo cp /tmp/pokemon-api.war /var/lib/tomcat10/webapps/
+sudo chown tomcat:tomcat /var/lib/tomcat10/webapps/pokemon-api.war
+sudo systemctl start tomcat10</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. RESUMEN -->
+    <section id="resumen">
+      <h2 class="section-title"><span class="n">8</span>Comandos de gestión y resumen</h2>
+      <table>
+        <thead><tr><th>Comando</th><th>Para qué sirve</th></tr></thead>
+        <tbody>
+          <tr><td><code class="inline">sudo systemctl start|stop|restart tomcat10</code></td><td>Arrancar, parar o reiniciar Tomcat (servicio systemd)</td></tr>
+          <tr><td><code class="inline">sudo systemctl status tomcat10</code></td><td>Ver el estado del servicio</td></tr>
+          <tr><td><code class="inline">sudo tail -f /var/log/tomcat10/catalina.out</code></td><td>Ver el arranque de Tomcat y de las apps desplegadas en tiempo real</td></tr>
+          <tr><td><code class="inline">ls /var/lib/tomcat10/webapps</code></td><td>Ver qué aplicaciones hay desplegadas</td></tr>
+          <tr><td><code class="inline">mvn clean package</code></td><td>Generar el <code class="inline">.war</code> de la aplicación Spring Boot</td></tr>
+          <tr><td><code class="inline">sudo ufw status</code></td><td>Ver los puertos permitidos en el firewall</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>Idea clave de la unidad</strong>
+        Un servidor de aplicaciones como Tomcat no sirve archivos: <strong>ejecuta código</strong>. Desplegar consiste en darle un <code class="inline">.war</code> con ese código empaquetado para que él se encargue del ciclo de vida completo de la aplicación &mdash;y la versión de Tomcat tiene que encajar con la de Spring Boot.
+      </div>
+    </section>
+
+    <!-- EXTRA. MANAGER APP -->
+    <section id="extra">
+      <h2 class="section-title"><span class="n">+</span>Tarea extra: acceder al Manager App</h2>
+      <p>El <strong>Manager App</strong> es la interfaz web de Tomcat para ver, parar, arrancar y desplegar aplicaciones sin usar SSH. En Ubuntu viene en un paquete aparte (<code class="inline">tomcat10-admin</code>), no trae ningún usuario creado y, por seguridad, su configuración solo deja entrar a conexiones que vengan de la propia VM. Esta tarea consiste en instalarlo, crear un usuario, abrirlo a conexiones externas y entrar desde el navegador.</p>
+
+      <div class="step">
+        <div class="dot">1</div>
+        <div class="body">
+          <h4>Instalar el paquete del Manager</h4>
+          <pre>sudo apt install tomcat10-admin -y</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">2</div>
+        <div class="body">
+          <h4>Crear un usuario con el rol <code class="inline">manager-gui</code></h4>
+          <p>Los usuarios se definen en <code class="inline">tomcat-users.xml</code>, dentro de la carpeta de configuración de Tomcat. Entramos en ella y abrimos el archivo con <code class="inline">nano</code>:</p>
+          <pre>cd /etc/tomcat10
+sudo nano tomcat-users.xml</pre>
+          <p>Baja hasta el final del archivo y añade estas dos líneas <strong>justo antes de</strong> <code class="inline">&lt;/tomcat-users&gt;</code> (después del último <code class="inline">--&gt;</code>), cambiando la contraseña por la tuya:</p>
+          <pre>&lt;role rolename="manager-gui"/&gt;
+&lt;user username="admin" password="<span class="f">ClaveTomcat2026</span>" roles="manager-gui"/&gt;</pre>
+          <p>Te tiene que quedar así:</p>
+          <pre><span class="c">--&gt;</span>
+  &lt;role rolename="manager-gui"/&gt;
+  &lt;user username="admin" password="<span class="f">ClaveTomcat2026</span>" roles="manager-gui"/&gt;
+&lt;/tomcat-users&gt;</pre>
+          <p>Guarda con <code class="inline">Ctrl+O</code>, <code class="inline">Enter</code> y sal con <code class="inline">Ctrl+X</code>. El reinicio lo haremos al final del paso 3.</p>
+        </div>
+      </div>
+
+      <div class="warn">
+        <strong>Ojo con el comentario y con el pegado</strong>
+        El <code class="inline">tomcat-users.xml</code> trae usuarios de ejemplo (<code class="inline">admin</code>, <code class="inline">robot</code>, <code class="inline">tomcat</code>&hellip;) con la contraseña <code class="inline">&lt;must-be-changed&gt;</code>, pero están dentro de un comentario <code class="inline">&lt;!-- ... --&gt;</code>: no existen de verdad, y si añades tus líneas dentro de un comentario Tomcat las ignora y el login falla. Escríbelas <strong>fuera</strong> de cualquier comentario y, mejor, <strong>a mano</strong>: al pegar en <code class="inline">nano</code> a veces se pierde el primer carácter.
+      </div>
+
+      <div class="step">
+        <div class="dot">3</div>
+        <div class="body">
+          <h4>Configurar el contexto del Manager (<code class="inline">manager.xml</code>) y reiniciar</h4>
+          <p>El archivo <code class="inline">/etc/tomcat10/Catalina/localhost/manager.xml</code> le dice a Tomcat dos cosas: <strong>dónde está</strong> la aplicación del Manager (<code class="inline">docBase</code>) y <strong>qué IPs pueden entrar</strong> (la <code class="inline">Valve</code>). Lo reescribimos con la ruta correcta y con la restricción de IP comentada:</p>
+          <pre>sudo tee /etc/tomcat10/Catalina/localhost/manager.xml &gt; /dev/null &lt;&lt;'EOF'
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Context <span class="f">docBase="/usr/share/tomcat10-admin/manager"</span> antiResourceLocking="false" privileged="true"&gt;
+  <span class="c">&lt;!--
+  &lt;Valve className="org.apache.catalina.valves.RemoteAddrValve"
+         allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /&gt;
+  --&gt;</span>
+&lt;/Context&gt;
+EOF
+sudo systemctl restart tomcat10</pre>
+          <ul>
+            <li>Sin <code class="inline">docBase</code>, Tomcat busca el Manager en <code class="inline">webapps/manager</code>, que no existe, y da <strong>404</strong>.</li>
+            <li>Con la <code class="inline">Valve</code> activa, solo se puede entrar desde la propia VM; desde otra IP da <strong>403</strong> sin llegar a pedir la contraseña. Al comentarla, se puede entrar con el navegador por la IP pública.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">4</div>
+        <div class="body">
+          <h4>Comprobar desde la VM</h4>
+          <pre>sleep 10
+curl -s -o /dev/null -w "%{http_code}\n" -u admin:ClaveTomcat2026 http://localhost:8080/manager/html</pre>
+          <p>Debe imprimir <code class="inline">200</code>. Si sale <code class="inline">401</code>, el usuario o la contraseña no coinciden con los de <code class="inline">tomcat-users.xml</code>.</p>
+          <p>No uses <code class="inline">curl -I</code> para esta prueba: manda una petición <code class="inline">HEAD</code> y el Manager responde <code class="inline">403</code> por su filtro anti-CSRF aunque todo esté bien.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">5</div>
+        <div class="body">
+          <h4>Entrar en el Manager desde el navegador</h4>
+          <pre>http://&lt;IP_PUBLICA_VM&gt;:8080/manager/html</pre>
+          <p>El navegador muestra un recuadro de usuario y contraseña: <code class="inline">admin</code> y la contraseña del paso 2. Se ve la lista de aplicaciones desplegadas (<code class="inline">/</code>, <code class="inline">/manager</code>, <code class="inline">/pokemon-api</code>&hellip;) con botones para <em>Start</em>, <em>Stop</em>, <em>Reload</em> y <em>Undeploy</em>. El puerto 8080 ya está abierto desde el punto 6.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="dot">6</div>
+        <div class="body">
+          <h4>Probar los botones y redesplegar desde el Manager</h4>
+          <p>Prueba <em>Stop</em> y <em>Start</em> sobre <code class="inline">/pokemon-api</code> y comprueba en <code class="inline">http://&lt;IP_PUBLICA_VM&gt;:8080/pokemon-api/api/v1/pokemon</code> cómo deja de responder y vuelve. Para desplegar desde aquí: <em>Undeploy</em> de <code class="inline">/pokemon-api</code> y, en la sección <em>WAR file to deploy</em>, subir de nuevo <code class="inline">pokemon-api.war</code> y pulsar <em>Deploy</em>.</p>
+        </div>
+      </div>
+
+      <div class="warn">
+        <strong>Límite de 50 MB en el Manager</strong>
+        El Manager rechaza subidas de más de <strong>50 MB</strong> y lo hace con un <em>403 Access Denied</em> que despista (parece un problema de permisos y no lo es). Si el <code class="inline">.war</code> pesa más, despliégalo copiándolo a <code class="inline">webapps/</code> como en el punto 7. Comprobar el tamaño: <code class="inline">ls -lh target/pokemon-api.war</code>.
+      </div>
+
+      <div class="warn">
+        <strong>Seguridad: el Manager queda abierto a todo internet</strong>
+        Con la <code class="inline">Valve</code> comentada, cualquiera que conozca la IP puede intentar entrar; solo lo protegen el usuario y la contraseña. Es cómodo para practicar, pero usa una contraseña propia (no la de estos apuntes) y no lo dejes así en un entorno real. Para eso está la alternativa del túnel SSH.
+      </div>
+
+      <h3>Alternativa más segura: túnel SSH</h3>
+      <p>Se deja la <code class="inline">Valve</code> activa, de modo que el Manager solo acepta conexiones de la propia VM, y se entra mediante un túnel SSH que hace que tu navegador "parezca" estar dentro de ella, sin abrir nada al exterior. Primero se vuelve a escribir <code class="inline">manager.xml</code> con la <code class="inline">Valve</code> sin comentar:</p>
+      <pre>sudo tee /etc/tomcat10/Catalina/localhost/manager.xml &gt; /dev/null &lt;&lt;'EOF'
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Context docBase="/usr/share/tomcat10-admin/manager" antiResourceLocking="false" privileged="true"&gt;
+  &lt;Valve className="org.apache.catalina.valves.RemoteAddrValve"
+         allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /&gt;
+&lt;/Context&gt;
+EOF
+sudo systemctl restart tomcat10</pre>
+      <p>Después, en una terminal de <strong>tu ordenador</strong> (no de la VM), y dejándola abierta mientras uses el Manager:</p>
+      <pre>ssh -L 8081:localhost:8080 usuario@&lt;IP_PUBLICA_VM&gt;</pre>
+      <p>Y en el navegador, <code class="inline">http://localhost:8081/manager/html</code>: el puerto <code class="inline">8081</code> de tu ordenador queda conectado con el <code class="inline">8080</code> de la VM.</p>
+
+      <h3>Si algo falla</h3>
+      <table>
+        <thead><tr><th>Síntoma</th><th>Causa</th><th>Solución</th></tr></thead>
+        <tbody>
+          <tr><td><code class="inline">404</code> en <code class="inline">/manager/html</code></td><td>Falta el <code class="inline">docBase</code> en <code class="inline">manager.xml</code></td><td>Repetir el paso 3</td></tr>
+          <tr><td><code class="inline">403</code> y no aparece el recuadro de contraseña</td><td>La <code class="inline">Valve</code> está activa y entras desde otra IP</td><td>Comentar la <code class="inline">Valve</code> (paso 3) o usar el túnel SSH</td></tr>
+          <tr><td>Aparece el recuadro y el login falla (<code class="inline">401</code>)</td><td>Usuario o contraseña incorrectos, o escritos dentro del comentario</td><td>Revisar el paso 2 y reiniciar Tomcat</td></tr>
+          <tr><td><code class="inline">403</code> con <code class="inline">curl -I</code></td><td><code class="inline">HEAD</code> no pasa el filtro anti-CSRF; no es un fallo real</td><td>Probar con el <code class="inline">curl</code> del paso 4 o con el navegador</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      Despliegue de Aplicaciones Web · DAW 2º curso · Escuela Profesional Vedruna &mdash; apuntes en construcción, se irán añadiendo nuevos temas.
+    </footer>
+
+  </main>
+</div>
+</body>
+</html>
